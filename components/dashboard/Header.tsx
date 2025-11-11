@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
+  DropdownMenuContent,
 } from "@/components/ui/dropdown-menu";
 import SearchIconHeader from "@/components/icons/SearchIconHeader";
 import DropdownChevronIcon from "@/components/icons/DropdownChevronIcon";
@@ -14,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { navigationItems } from "./Sidebar";
 import type { UserProfileData } from "@/types/schema";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 interface HeaderProps {
   userProfile: UserProfileData;
@@ -101,6 +103,9 @@ export function Header({ userProfile, onSearch, title = "Dashboard" }: HeaderPro
                 );
               })}
             </nav>
+            <div className="mt-4">
+              <LogoutButton variant="outline" size="sm" className="w-full" />
+            </div>
           </div>
         </div>
       )}
@@ -126,7 +131,11 @@ export function Header({ userProfile, onSearch, title = "Dashboard" }: HeaderPro
                   <DropdownChevronIcon width={24} height={24} className="text-black" />
                 </div>
               </DropdownMenuTrigger>
-              {/* DropdownMenuContent intentionally omitted to hide options */}
+              <DropdownMenuContent className="w-48">
+                <div className="px-1 py-1">
+                  <LogoutButton variant="ghost" size="sm" className="w-full justify-start" />
+                </div>
+              </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
@@ -166,7 +175,11 @@ export function Header({ userProfile, onSearch, title = "Dashboard" }: HeaderPro
                 <DropdownChevronIcon width={24} height={24} className="text-black" />
               </div>
             </DropdownMenuTrigger>
-            {/* DropdownMenuContent intentionally omitted to hide options */}
+            <DropdownMenuContent className="w-48">
+              <div className="px-1 py-1">
+                <LogoutButton variant="ghost" size="sm" className="w-full justify-start" />
+              </div>
+            </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { mockRootProps } from "@/lib/dashboardMockData";
 import { adminDb } from "@/lib/firebase/admin";
 import { getRevenueForPeriod } from "@/lib/revenue";
 import { buildTopRegionsFromReports } from "@/lib/trustSafety";
+import { requireAdmin } from "@/lib/auth";
 
 // Ensure Node.js runtime so the Admin SDK can run
 export const runtime = "nodejs";
@@ -355,6 +356,7 @@ async function getTotalRevenueAmount(): Promise<number> {
 }
 
 export default async function Home() {
+  await requireAdmin();
   const [activeCount, aiProfilesCount, todaysRevenueAmount, revenueSeries, reportsReceived, transactionsCount, topRegions] = await Promise.all([
     getActiveUsersCount(),
     getAIProfilesCount(),

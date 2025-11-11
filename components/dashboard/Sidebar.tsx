@@ -9,6 +9,7 @@ import AIProfilesIcon from "@/components/icons/AIProfilesIcon";
 import TrustSafetyIcon from "@/components/icons/TrustSafetyIcon";
 import AnalyticsIcon from "@/components/icons/AnalyticsIcon";
 import DateActivityIcon from "@/components/icons/DateActivityIcon";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 export const navigationItems = [
   { icon: OverviewIcon, label: "Overview", href: "/" },
@@ -60,6 +61,10 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      <div className="mt-auto px-4 pb-6">
+        <LogoutButton variant="outline" size="sm" className="w-full" />
+      </div>
     </div>
   );
 }
