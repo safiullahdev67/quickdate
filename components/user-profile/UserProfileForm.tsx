@@ -26,6 +26,92 @@ const GOALS: RelationshipGoal[] = [
   "Something casual",
 ];
 
+const NIGERIAN_STATES = [
+  'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa',
+  'Benue','Borno','Cross River','Delta','Ebonyi','Edo',
+  'Ekiti','Enugu','FCT (Abuja)','Gombe','Imo','Jigawa','Kaduna',
+  'Kano','Katsina','Kebbi','Kogi','Kwara','Lagos','Nasarawa',
+  'Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers',
+  'Sokoto','Taraba','Yobe','Zamfara',
+];
+
+const NIGERIAN_CITIES = [
+  'Lagos','Abuja','Kano','Ibadan','Port Harcourt','Benin City',
+  'Kaduna','Maiduguri','Zaria','Aba','Jos','Ilorin','Oyo',
+  'Enugu','Abeokuta','Sokoto','Onitsha','Warri','Calabar',
+  'Uyo','Akure','Bauchi','Katsina','Ado-Ekiti','Makurdi',
+  'Minna','Lokoja','Keffi','Nnewi','Ogbomoso','Ikare',
+  'Okene','Suleja','Kontagora','Bida','Umuahia','Awka',
+  'Asaba','Owerri','Yenagoa','Dutse','Damaturu','Gombe',
+  'Jalingo','Katsina-Ala','Lafia','Nasarawa','Wukari',
+];
+
+const COUNTRIES = [
+  'Nigeria','Ghana','South Africa','Kenya','United Kingdom',
+  'United States','Canada','Germany','France','Italy','Spain',
+  'Netherlands','Belgium','Switzerland','Australia','New Zealand',
+  'United Arab Emirates','Saudi Arabia','Qatar','Other',
+];
+
+const EDUCATION_LEVELS = [
+  'Primary School',
+  'Secondary School (WAEC/NECO)',
+  'OND/HND',
+  "Bachelor's Degree (BSc/BA)",
+  "Master's Degree (MSc/MA)",
+  'PhD',
+  'Professional Certification',
+  'Trade School',
+  'Other',
+];
+
+const WORK_STATUSES = [
+  'Employed (Private Sector)',
+  'Employed (Government)',
+  'Self-Employed',
+  'Student',
+  'NYSC',
+  'Unemployed',
+  'Retired',
+  'Freelancer',
+  'Business Owner',
+  'Other',
+];
+
+const NIGERIAN_OCCUPATIONS = [
+  'Software Engineer','Doctor','Nurse','Teacher','Banker','Accountant',
+  'Lawyer','Engineer','Architect','Pharmacist','Journalist','Pilot',
+  'Civil Servant','Business Owner','Trader','Farmer','Driver',
+  'Mechanic','Electrician','Plumber','Carpenter','Tailor','Hair Stylist',
+  'Chef','Waiter','Security Guard','Cleaner','Student','NYSC Member',
+  'Unemployed','Retired','Freelancer','Consultant','Manager',
+  'Sales Representative','Marketing Executive','HR Manager','IT Support',
+  'Data Analyst','Project Manager','Real Estate Agent','Insurance Agent',
+  'Other',
+];
+
+const NIGERIAN_ETHNICITIES = [
+  'Hausa','Yoruba','Igbo','Fulani','Kanuri','Tiv','Ibibio',
+  'Edo','Nupe','Ijaw','Urhobo','Efik','Igala','Idoma',
+  'Itsekiri','Isoko','Anang','Ekoi','Bini','Esan',
+  'Afemai','Owan','Akoko-Edo','Okpe','Uvwie','Udu','Ughievwen',
+];
+
+const CULTURAL_LANGUAGES = [
+  'English','Hausa','Yoruba','Igbo','Fulani','Kanuri','Tiv',
+  'Ibibio','Edo','Nupe','Ijaw','Urhobo','French','Arabic','Other',
+];
+
+const CULTURAL_RELIGIONS = [
+  'Christianity',
+  'Islam',
+  'Traditional Religion',
+  'Atheist',
+  'Agnostic',
+  'Other',
+  'Prefer not to say',
+];
+
 export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
   // Step 1
   const [firstName, setFirstName] = useState("");
@@ -33,6 +119,31 @@ export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
   const [email, setEmail] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [gender, setGender] = useState("female");
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [about, setAbout] = useState("");
+  const [nationalIdUrl, setNationalIdUrl] = useState<string | null>(null);
+  const [nationalIdUploading, setNationalIdUploading] = useState(false);
+
+  // Extended profile fields (mirror mobile signup data)
+  const [stateOfOrigin, setStateOfOrigin] = useState("");
+  const [currentResidence, setCurrentResidence] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [location, setLocation] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [genotype, setGenotype] = useState("");
+  const [educationLevel, setEducationLevel] = useState("");
+  const [workStatus, setWorkStatus] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [company, setCompany] = useState("");
+  const [school, setSchool] = useState("");
+  const [tribe, setTribe] = useState("");
+  const [primaryLanguage, setPrimaryLanguage] = useState("");
+  const [religion, setReligion] = useState("");
 
   // Step 2
   const [interests, setInterests] = useState<string[]>([]);
@@ -55,8 +166,18 @@ export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
 
   const interestsCount = interests.length;
   const canSubmit = useMemo(() => {
-    return firstName && lastName && email && gender && interestsCount >= 3 && photos.length >= 2;
-  }, [firstName, lastName, email, gender, interestsCount, photos.length]);
+    return (
+      firstName &&
+      lastName &&
+      email &&
+      gender &&
+      interestsCount >= 3 &&
+      photos.length >= 2 &&
+      password &&
+      password.length >= 6 &&
+      password === confirmPassword
+    );
+  }, [firstName, lastName, email, gender, interestsCount, photos.length, password, confirmPassword]);
 
   const toggle = (val: string, list: string[], setList: (v: string[]) => void, max?: number) => {
     const exists = list.includes(val);
@@ -83,33 +204,72 @@ export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
     }
   };
 
-  const progress = useMemo(() => {
-    let p = 0;
-    if (firstName && lastName && email && gender && birthDate) p += 35;
-    if (interests.length >= 3) p += 25;
-    if (photos.length >= 2) p += 25;
-    if (goals.length || interestedIn) p += 15;
-    return Math.min(100, p);
-  }, [firstName, lastName, email, gender, birthDate, interests.length, photos.length, goals.length, interestedIn]);
+  const handleNationalIdUpload = async (file?: File) => {
+    if (!file) return;
+    try {
+      setNationalIdUploading(true);
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/uploads/user-photo", { method: "POST", body: form });
+      const data = await res.json();
+      if (data?.ok && data.url) setNationalIdUrl(data.url);
+      else showToast(data?.error || "Upload failed");
+    } catch (e: any) {
+      showToast(e?.message || "Upload failed");
+    } finally {
+      setNationalIdUploading(false);
+    }
+  };
 
   const onSubmit = async () => {
     if (saving || !canSubmit) { if (!canSubmit) showToast("Fill required fields"); return; }
     try {
       setSaving(true);
+      const primaryGoal = goals[0] || null;
       const payload = {
         first_name: firstName,
         last_name: lastName,
         email,
         birthday: birthDate,
         gender,
+        password,
+        about,
+        national_id: nationalIdUrl,
+        location,
+        state_of_origin: stateOfOrigin,
+        current_residence: currentResidence,
+        city,
+        country,
+        height,
+        weight,
+        blood_group: bloodGroup,
+        genotype,
+        education_level: educationLevel,
+        work_status: workStatus,
+        occupation,
+        company,
+        school,
+        tribe,
+        primary_language: primaryLanguage,
+        religion,
         interest: interests,
         photos: { main: photos[0] || null, gallery: photos },
         interestedIn,
+        relationshipType: primaryGoal,
+        preferences: {
+          interestedIn,
+          ageRange: { min: ageRange[0], max: ageRange[1] },
+          maxDistanceKm: maxDistance[0] || 0,
+          goals,
+          dealBreakers,
+        },
       };
       const res = await fetch("/api/users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const data = await res.json();
+      console.log('[UserProfileForm] POST /api/users response:', data);
       if (data?.ok) {
         showToast("Saved user profile");
+        console.log('[UserProfileForm] Calling onSaved callback');
         onSaved?.();
       } else {
         showToast(data?.error || "Save failed");
@@ -138,16 +298,12 @@ export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
         </Button>
       </div>
 
-      {/* Progress */}
-      <div className="mb-6">
-        <div className="h-2 w-full bg-gray-200/70 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-[#E17CFD] to-[#8950FC] transition-all" style={{ width: `${progress}%` }} />
-        </div>
-        <div className="text-xs text-muted-foreground mt-1">{progress}% complete</div>
-      </div>
-
       {/* Basic Info */}
-      <section className="p-0 bg-transparent border-0">
+      <section className="mt-4 p-0 bg-transparent border-0">
+        <div className="mb-4">
+          <h3 className="text-base md:text-lg font-semibold">Basic information</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">Name, contact details, birthday, gender and password</p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="flex flex-col gap-2">
             <label className="form-label">First Name</label>
@@ -179,16 +335,304 @@ export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
             </Select>
           </div>
         </div>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Password</label>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Min 6 characters"
+              className="h-[42px]"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Confirm Password</label>
+            <Input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Re-enter password"
+              className="h-[42px]"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* About & ID */}
+      <section className="mt-6 p-0 bg-transparent border-0">
+        <div className="mb-4">
+          <h3 className="text-base md:text-lg font-semibold">About & ID verification</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">Short bio and national ID image (used for verification only)</p>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 flex flex-col gap-2">
+            <label className="form-label">About</label>
+            <textarea
+              value={about}
+              onChange={(e) => setAbout(e.target.value)}
+              placeholder="Short bio or description"
+              rows={3}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8950FC] focus-visible:ring-offset-1"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">National ID (Photo)</label>
+            <label className="rounded-xl border border-dashed flex flex-col items-center justify-center min-h-[120px] px-3 py-3 cursor-pointer text-xs text-muted-foreground">
+              {nationalIdUrl ? (
+                <div className="w-full flex flex-col items-center gap-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={nationalIdUrl} alt="National ID" className="w-full h-28 object-cover rounded-lg" />
+                  <span className="text-[11px]">Click to replace ID image</span>
+                </div>
+              ) : (
+                <span className="text-[11px]">Click to upload ID card or passport photo</span>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleNationalIdUpload(e.target.files?.[0] || undefined)}
+              />
+            </label>
+            <div className="text-[11px] text-muted-foreground mt-1">
+              {nationalIdUploading ? "Uploading ID..." : "Used for verification (not visible publicly)."}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Location Information */}
+      <section className="mt-6 p-0 bg-transparent border-0">
+        <div className="mb-4">
+          <h3 className="text-base md:text-lg font-semibold">Location information</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">Where you're from and where you currently live</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="form-label">State of Origin</label>
+            <Select value={stateOfOrigin} onValueChange={setStateOfOrigin}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select state" />
+              </SelectTrigger>
+              <SelectContent>
+                {NIGERIAN_STATES.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Current State</label>
+            <Select value={currentResidence} onValueChange={setCurrentResidence}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select current state" />
+              </SelectTrigger>
+              <SelectContent>
+                {NIGERIAN_STATES.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">City</label>
+            <Select value={city} onValueChange={setCity}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select city" />
+              </SelectTrigger>
+              <SelectContent>
+                {NIGERIAN_CITIES.map((c) => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Country</label>
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((c) => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </section>
+
+      {/* Physical Attributes */}
+      <section className="mt-6 p-0 bg-transparent border-0">
+        <div className="mb-4">
+          <h3 className="text-base md:text-lg font-semibold">Physical attributes</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">Height, weight, blood group and genotype</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Height (cm)</label>
+            <Input value={height} onChange={(e) => setHeight(e.target.value)} placeholder="e.g. 175" className="h-[42px]" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Weight (kg)</label>
+            <Input value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g. 70" className="h-[42px]" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Blood Group</label>
+            <Select value={bloodGroup} onValueChange={setBloodGroup}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="A+">A+</SelectItem>
+                <SelectItem value="A-">A-</SelectItem>
+                <SelectItem value="B+">B+</SelectItem>
+                <SelectItem value="B-">B-</SelectItem>
+                <SelectItem value="AB+">AB+</SelectItem>
+                <SelectItem value="AB-">AB-</SelectItem>
+                <SelectItem value="O+">O+</SelectItem>
+                <SelectItem value="O-">O-</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Genotype</label>
+            <Select value={genotype} onValueChange={setGenotype}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="AA">AA</SelectItem>
+                <SelectItem value="AS">AS</SelectItem>
+                <SelectItem value="SS">SS</SelectItem>
+                <SelectItem value="AC">AC</SelectItem>
+                <SelectItem value="SC">SC</SelectItem>
+                <SelectItem value="CC">CC</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </section>
+
+      {/* Occupation & Education */}
+      <section className="mt-6 p-0 bg-transparent border-0">
+        <div className="mb-4">
+          <h3 className="text-base md:text-lg font-semibold">Occupation & education</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">Your education level, work status and role</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Education Level</label>
+            <Select value={educationLevel} onValueChange={setEducationLevel}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select education level" />
+              </SelectTrigger>
+              <SelectContent>
+                {EDUCATION_LEVELS.map((eLevel) => (
+                  <SelectItem key={eLevel} value={eLevel}>{eLevel}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Work Status</label>
+            <Select value={workStatus} onValueChange={setWorkStatus}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select work status" />
+              </SelectTrigger>
+              <SelectContent>
+                {WORK_STATUSES.map((w) => (
+                  <SelectItem key={w} value={w}>{w}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Occupation / Role</label>
+            <Select value={occupation} onValueChange={setOccupation}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select occupation" />
+              </SelectTrigger>
+              <SelectContent>
+                {NIGERIAN_OCCUPATIONS.map((o) => (
+                  <SelectItem key={o} value={o}>{o}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Company</label>
+            <Input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company (optional)" className="h-[42px]" />
+          </div>
+        </div>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="form-label">School</label>
+            <Input value={school} onChange={(e) => setSchool(e.target.value)} placeholder="School or institution" className="h-[42px]" />
+          </div>
+        </div>
+      </section>
+
+      {/* Cultural Information */}
+      <section className="mt-6 p-0 bg-transparent border-0">
+        <div className="mb-4">
+          <h3 className="text-base md:text-lg font-semibold">Cultural information</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">Tribe, primary language and religion</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Tribe / Ethnicity</label>
+            <Select value={tribe} onValueChange={setTribe}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select tribe" />
+              </SelectTrigger>
+              <SelectContent>
+                {NIGERIAN_ETHNICITIES.map((t) => (
+                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Primary Language</label>
+            <Select value={primaryLanguage} onValueChange={setPrimaryLanguage}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                {CULTURAL_LANGUAGES.map((l) => (
+                  <SelectItem key={l} value={l}>{l}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Religion</label>
+            <Select value={religion} onValueChange={setReligion}>
+              <SelectTrigger className="h-[42px]">
+                <SelectValue placeholder="Select religion" />
+              </SelectTrigger>
+              <SelectContent>
+                {CULTURAL_RELIGIONS.map((r) => (
+                  <SelectItem key={r} value={r}>{r}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </section>
 
       {/* Interests */}
       <section className="mt-6 p-0 bg-transparent border-0">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-base md:text-lg font-semibold">Your Interests</h3>
-            <p className="text-xs md:text-sm text-muted-foreground">Pick at least 3 ({interests.length}/16 selected)</p>
+            <h3 className="text-base md:text-lg font-semibold">Your interests</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">Pick at least 3 things you care about</p>
           </div>
         </div>
+        <p className="text-[11px] text-muted-foreground mb-2">Selected: {interests.length}/16</p>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-2 md:gap-3">
           {ALL_INTERESTS.map((i) => {
             const active = interests.includes(i);
@@ -211,8 +655,8 @@ export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
       <section className="mt-6 p-0">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-base md:text-lg font-semibold">Add Your Photos</h3>
-            <p className="text-xs md:text-sm text-muted-foreground">Add at least 2 photos ({photos.length}/6)</p>
+            <h3 className="text-base md:text-lg font-semibold">Photos</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">Add at least 2 clear photos ({photos.length}/6)</p>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -235,6 +679,10 @@ export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
 
       {/* Preferences */}
       <section className="mt-6 p-0">
+        <div className="mb-4">
+          <h3 className="text-base md:text-lg font-semibold">Preferences & goals</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">Who you're interested in, distance and relationship goals</p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <div className="mb-2 text-base font-semibold">I'm interested in</div>
@@ -268,7 +716,8 @@ export default function UserProfileForm({ onSaved }: { onSaved?: () => void }) {
 
       {/* Deal Breakers */}
       <section className="mt-6 p-0">
-        <h3 className="text-base md:text-lg font-semibold">Deal Breakers (Optional)</h3>
+        <h3 className="text-base md:text-lg font-semibold">Deal breakers (optional)</h3>
+        <p className="text-xs md:text-sm text-muted-foreground mt-1 mb-2">Things you absolutely cannot compromise on</p>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-2 md:gap-3 mt-3">
           {DEAL_BREAKERS.map((d) => {
             const active = dealBreakers.includes(d);

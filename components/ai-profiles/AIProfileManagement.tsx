@@ -24,7 +24,9 @@ export function AIProfileManagement(props: AIProfileManagementProps) {
     try {
       const res = await fetch("/api/users?limit=100");
       const data = await res.json();
+      console.log('[fetchProfiles] API response:', data);
       if (data?.ok && Array.isArray(data.items)) {
+        console.log('[fetchProfiles] Found', data.items.length, 'users');
         setUsers(data.items);
         const mapped: ProfileData[] = data.items.map((u: any, idx: number) => {
           const fn = u.first_name ?? u.firstName ?? "";
@@ -38,8 +40,12 @@ export function AIProfileManagement(props: AIProfileManagementProps) {
           };
         });
         setProfiles(mapped);
+      } else {
+        console.warn('[fetchProfiles] Unexpected response format:', data);
       }
-    } catch {}
+    } catch (e) {
+      console.error('[fetchProfiles] Error:', e);
+    }
   };
 
   useEffect(() => {
